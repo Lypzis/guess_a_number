@@ -88,32 +88,34 @@ const GameScreen = props => {
 	);
 
 	return (
-		<View style={styles.screen}>
-			<Text>Opponent's Guess:</Text>
-			<NumberContainer>{currentGuess}</NumberContainer>
-			<Card style={styles.buttonContainer}>
-				<MainButton onPress={nextGuessHandler.bind(this, "lower")}>
-					<Ionicons name="md-remove" size={24} color="#fff" />{" "}
-				</MainButton>
-				<MainButton onPress={nextGuessHandler.bind(this, "higher")}>
-					<Ionicons name="md-add" size={24} color="#fff" />
-				</MainButton>
-			</Card>
-			<View
-				style={
-					Dimensions.get("window").width > 350
-						? styles.listContainer
-						: styles.listContainerBig
-				}
-			>
-				<ScrollView contentContainerStyle={styles.list}>
-					{/** 'contentContainerStyle' for styling 'Scrollview' and 'flatlist', check docs */}
-					{pastGuesses.map((guess, index) =>
-						renderListItem(guess, pastGuesses.length - index)
-					)}
-				</ScrollView>
+		<ScrollView>
+			<View style={styles.screen}>
+				<Text>Opponent's Guess:</Text>
+				<NumberContainer>{currentGuess}</NumberContainer>
+				<Card style={styles.buttonContainer}>
+					<MainButton onPress={nextGuessHandler.bind(this, "lower")}>
+						<Ionicons name="md-remove" size={24} color="#fff" />{" "}
+					</MainButton>
+					<MainButton onPress={nextGuessHandler.bind(this, "higher")}>
+						<Ionicons name="md-add" size={24} color="#fff" />
+					</MainButton>
+				</Card>
+				<View
+					style={
+						Dimensions.get("window").width > 350
+							? styles.listContainer
+							: styles.listContainerBig
+					}
+				>
+					<ScrollView contentContainerStyle={styles.list}>
+						{/** 'contentContainerStyle' for styling 'Scrollview' and 'flatlist', check docs */}
+						{pastGuesses.map((guess, index) =>
+							renderListItem(guess, pastGuesses.length - index)
+						)}
+					</ScrollView>
+				</View>
 			</View>
-		</View>
+		</ScrollView>
 	);
 };
 

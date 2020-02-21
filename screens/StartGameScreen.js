@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
 	View,
 	Text,
@@ -11,7 +11,9 @@ import {
 	Keyboard,
 
 	// Responsivity purposes
-	Dimensions
+	Dimensions,
+	ScrollView,
+	KeyboardAvoidingView
 } from "react-native";
 
 import Card from "../components/Card";
@@ -25,6 +27,24 @@ const StartGameScreen = props => {
 	const [enteredValue, setEnteredValue] = useState("");
 	const [confirmed, setConfirmed] = useState(false);
 	const [selectedNumber, setSelectedNumber] = useState(0);
+	const [buttonWidth, setButtonWidth] = useState(
+		Dimensions.get("window").width / 4
+	);
+
+	useEffect(() => {
+		// redimension buttonss
+		const updateLayout = () => {
+			Dimensions.get("window").width < 500
+				? setButtonWidth(Dimensions.get("window").width / 3)
+				: setButtonWidth(Dimensions.get("window").width / 4);
+		};
+		// Listens to layout changes(landscape/portrait), to execute its function
+		Dimensions.addEventListener("change", updateLayout);
+
+		// cleanup function, runs right before useEffect runs
+		// This avoids creation of multiple listeners to the same thing whenever state updates
+		return () => Dimensions.removeEventListener("change", updateLayout);
+	});
 
 	const numberInputHandler = inputText => {
 		setEnteredValue(inputText.replace(/[^0-9]/g, "")); // this regex replaces any non number value for ''(an empty string)
@@ -69,47 +89,53 @@ const StartGameScreen = props => {
 		);
 
 	return (
-		<TouchableWithoutFeedback
-			onPress={() => {
-				Keyboard.dismiss(); // when anywhere outside of the screen of the app is tapped, closes keyboard;
-			}}
-		>
-			<View style={styles.screen}>
-				<Text style={styles.title}>Start a New Game!</Text>
-				<Card style={styles.inputContainer}>
-					<BodyText>Select a Number</BodyText>
-					<Input
-						blurOnSubmit
-						autoCapitalize="none"
-						autoCorrect={false}
-						keyboardType="numeric"
-						maxLength={2}
-						onChangeText={numberInputHandler}
-						value={enteredValue}
-					/>
-					<View style={styles.buttonContainer}>
-						<View style={styles.button}>
-							<Button
-								title="Reset"
-								color={Colors.secondary}
-								onPress={resetInputHandler}
+		<ScrollView>
+			<KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
+				<TouchableWithoutFeedback
+					onPress={() => {
+						Keyboard.dismiss(); // when anywhere outside of the screen of the app is tapped, closes keyboard;
+					}}
+				>
+					<View style={styles.screen}>
+						<Text style={styles.title}>Start a New Game!</Text>
+						<Card style={styles.inputContainer}>
+							<BodyText>Select a Number</BodyText>
+							<Input
+								blurOnSubmit
+								autoCapitalize="none"
+								autoCorrect={false}
+								keyboardType="numeric"
+								maxLength={2}
+								onChangeText={numberInputHandler}
+								value={enteredValue}
 							/>
-						</View>
-						<View style={styles.button}>
-							<Button
-								title="Confirm"
-								color={Colors.primary}
-								onPress={confirmInputHandler}
-							/>
-						</View>
+							<View style={styles.buttonContainer}>
+								<View style={{ ...styles.button, width: buttonWidth }}>
+									<Button
+										title="Reset"
+										color={Colors.secondary}
+										onPress={resetInputHandler}
+									/>
+								</View>
+								<View style={{ ...styles.button, width: buttonWidth }}>
+									<Button
+										title="Confirm"
+										color={Colors.primary}
+										onPress={confirmInputHandler}
+									/>
+								</View>
+							</View>
+						</Card>
+						{confirmedOutput}
 					</View>
-				</Card>
-				{confirmedOutput}
-			</View>
-		</TouchableWithoutFeedback>
+				</TouchableWithoutFeedback>
+			</KeyboardAvoidingView>
+		</ScrollView>
 	);
 };
 
+// only runs once, so things in here
+// won't respond to state changes
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
@@ -136,7 +162,10 @@ const styles = StyleSheet.create({
 	button: {
 		//width: "47%" or
 		// Dimensions always get the measures of the screen
-		width: Dimensions.get("window").width / 3 // Note: use always window, for it works in both ios and android
+		width:
+			Dimensions.get("window").width < 500
+				? Dimensions.get("window").width / 3
+				: Dimensions.get("window").width / 4 // Note: use always window, for it works in both ios and android
 	},
 	summaryContainer: {
 		marginTop: 20,
