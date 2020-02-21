@@ -8,7 +8,10 @@ import {
 
 	// usability purposes
 	TouchableWithoutFeedback,
-	Keyboard
+	Keyboard,
+
+	// Responsivity purposes
+	Dimensions
 } from "react-native";
 
 import Card from "../components/Card";
@@ -119,8 +122,9 @@ const styles = StyleSheet.create({
 		fontFamily: "open-sans-bold"
 	},
 	inputContainer: {
-		width: 300,
-		maxWidth: "80%", // does not excede 80%
+		width: "80%", //default
+		maxWidth: "95%", // ensures that the width will never touches or reach outside of the screen
+		minWidth: 300, // or this, for really small devices
 		alignItems: "center"
 	},
 	buttonContainer: {
@@ -130,7 +134,9 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 15 // padding to left and right
 	},
 	button: {
-		width: "47%"
+		//width: "47%" or
+		// Dimensions always get the measures of the screen
+		width: Dimensions.get("window").width / 3 // Note: use always window, for it works in both ios and android
 	},
 	summaryContainer: {
 		marginTop: 20,

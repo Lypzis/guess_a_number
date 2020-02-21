@@ -1,5 +1,12 @@
 import React, { useState, useRef, useEffect } from "react"; // useRef survives re-render as the same object and values, which is what it is
-import { View, Text, StyleSheet, Alert, ScrollView } from "react-native";
+import {
+	View,
+	Text,
+	StyleSheet,
+	Alert,
+	ScrollView,
+	Dimensions
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import NumberContainer from "../components/NumberContainer";
@@ -92,7 +99,13 @@ const GameScreen = props => {
 					<Ionicons name="md-add" size={24} color="#fff" />
 				</MainButton>
 			</Card>
-			<View style={styles.listContainer}>
+			<View
+				style={
+					Dimensions.get("window").width > 350
+						? styles.listContainer
+						: styles.listContainerBig
+				}
+			>
 				<ScrollView contentContainerStyle={styles.list}>
 					{/** 'contentContainerStyle' for styling 'Scrollview' and 'flatlist', check docs */}
 					{pastGuesses.map((guess, index) =>
@@ -113,14 +126,19 @@ const styles = StyleSheet.create({
 	buttonContainer: {
 		flexDirection: "row",
 		justifyContent: "space-around",
-		marginTop: 15,
+		marginTop: Dimensions.get("window").height > 600 ? 20 : 7, // if window height is bigger than 600, use 20 as margin else 10
 		marginBottom: 5,
 		width: 300,
 		maxWidth: "90%"
 	},
 	listContainer: {
-		flex: 1, // this is extremelly necessary for android, or the scrollview won't work
+		flex: 1, // this is extremelly necessary for android, or the scrollview won't work"
 		width: "75%"
+	},
+	//example
+	listContainerBig: {
+		flex: 1,
+		width: "95%"
 	},
 	list: {
 		flexGrow: 1, // takes all available space and as it grows, it takes more space, using just 'flex' will brake the 'scroll'
@@ -135,8 +153,10 @@ const styles = StyleSheet.create({
 		padding: 15,
 		marginVertical: 5,
 		backgroundColor: "#fff",
-		justifyContent: "space-around",
-		width: "60%",
+		justifyContent:
+			Dimensions.get("window").width < 350 ? "space-between" : "space-around",
+		//width: "60%",
+		width: Dimensions.get("window").width > 350 ? "60%" : "95%",
 
 		elevation: 2
 	},
